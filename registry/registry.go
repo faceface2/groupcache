@@ -2,8 +2,6 @@ package registry
 
 import "errors"
 
-var DefaultRegistry = NewRegistry()
-
 var ErrNotFound = errors.New("service not found")
 
 var ErrWatcherStopped = errors.New("watcher stopped")
@@ -57,11 +55,3 @@ type WatchOption func(options *WatchOptions)
 type GetOption func(options *GetOptions)
 
 type ListOption func(options *ListOptions)
-
-func NewRegistry() Registry {
-	return nil
-}
-
-func Register(s *Service, opts ...RegisterOption) error {
-	return DefaultRegistry.Register(s, opts...)
-}

@@ -3,6 +3,7 @@ package registry
 import (
 	"context"
 	"crypto/tls"
+	"go.uber.org/zap"
 	"log"
 	"time"
 )
@@ -12,7 +13,7 @@ type Options struct {
 	Timeout   time.Duration
 	Secure    bool
 	TLSConfig *tls.Config
-	Logger    *log.Logger
+	Logger    *zap.Logger
 	Context   context.Context
 }
 
