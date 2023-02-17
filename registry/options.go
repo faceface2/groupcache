@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"go.uber.org/zap"
-	"log"
 	"time"
 )
 
@@ -43,7 +42,7 @@ type ListOptions struct {
 func NewOptions(opts ...Option) *Options {
 	options := Options{
 		Context: context.Background(),
-		Logger:  log.Default(),
+		Logger:  zap.NewExample(),
 	}
 
 	for _, o := range opts {
@@ -146,7 +145,7 @@ func Services(s map[string][]*Service) Option {
 	}
 }
 
-func Logger(l *log.Logger) Option {
+func Logger(l *zap.Logger) Option {
 	return func(options *Options) {
 		options.Logger = l
 	}
