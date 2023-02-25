@@ -1,10 +1,15 @@
 package registry
 
-import "errors"
+import (
+	"errors"
+	"groupcache/registry/etcd"
+)
 
 var ErrNotFound = errors.New("service not found")
 
 var ErrWatcherStopped = errors.New("watcher stopped")
+
+var DefaultRegistry = NewRegistry()
 
 type Registry interface {
 	Init(...Option) error
@@ -55,3 +60,36 @@ type WatchOption func(options *WatchOptions)
 type GetOption func(options *GetOptions)
 
 type ListOption func(options *ListOptions)
+
+func NewRegistry(opts ...Option) Registry {
+	return etcd.NewRegistry(opts...)
+}
+
+// Register a service node. Additionally supply options such as TTL.
+func Register(s *Service, opts ...RegisterOption) error {
+	return DefaultRegistry.Register(s, opts...)
+}
+
+// Deregister a service node.
+func Deregister(s *Service) error {
+	return DefaultRegistry.Deregister(s)
+}
+
+// Retrieve a service. A slice is returned since we separate Name/Version.
+func GetService(name string) ([]*Service, error) {
+	return DefaultRegistry.GetService(name)
+}
+
+// List the services. Only returns service names.
+func ListServices() ([]*Service, error) {
+	return DefaultRegistry.ListServices()
+}
+
+// Watch returns a watcher which allows you to track updates to the registry.
+func Watch(opts ...WatchOption) (Watcher, error) {
+	return DefaultRegistry.Watch(opts...)
+}
+
+func String() string {
+	return DefaultRegistry.String()
+}

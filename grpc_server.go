@@ -52,7 +52,22 @@ func (s *GRPCServer) Start() error {
 	pb.RegisterGroupCacheServer(grpcServer, s)
 	// etcd 注册服务
 	go func() {
-		err = registry.Register("cache", s.addr, s.stop)
+		node := &registry.Node{
+			ID:       "1",
+			Address:  s.addr,
+			Metadata: nil,
+		}
+		node.Metadata["registry"] = "etcd"
+		node.Metadata["server"] = s.String()
+		node.Metadata["transport"] = s.String()
+		node.Metadata["protocol"] = "grpc"
+
+		service := &registry.Service{
+			Name:    "c1",
+			Version: "1.0",
+			Nodes:   []*registry.Node{node},
+		}
+		err = registry.Register(service)
 		if err != nil {
 			log.Fatalf(err.Error())
 		}
@@ -82,4 +97,8 @@ func (s *GRPCServer) Get(ctx context.Context, request *pb.GetRequest) (*pb.GetRe
 		return resp, fmt.Errorf("group not found")
 	}
 	return resp, nil
+}
+
+func (s *GRPCServer) String() string {
+	return "grpc-server"
 }
